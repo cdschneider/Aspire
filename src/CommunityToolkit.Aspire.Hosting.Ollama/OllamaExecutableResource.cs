@@ -1,16 +1,14 @@
 ﻿namespace Aspire.Hosting.ApplicationModel;
 
 /// <summary>
-/// A resource that represents an Ollama container.
+/// 
 /// </summary>
-/// <remarks>
-/// Constructs an <see cref="OllamaResource"/>.
-/// </remarks>
-/// <param name="name">The name for the resource.</param>
-public class OllamaResource(string name) : ContainerResource(name), IOllamaResource
+/// <param name="name"></param>
+/// <param name="command"></param>
+public class OllamaExecutableResource(string name, string command) : ExecutableResource(name, command, string.Empty), IOllamaResource
 {
     internal const string OllamaEndpointName = "http";
-
+    
     private readonly List<string> _models = [];
 
     private EndpointReference? _primaryEndpointReference;
@@ -31,10 +29,10 @@ public class OllamaResource(string name) : ContainerResource(name), IOllamaResou
     /// Gets the connection string expression for the Ollama server.
     /// </summary>
     public ReferenceExpression ConnectionStringExpression =>
-      ReferenceExpression.Create(
-        $"Endpoint={PrimaryEndpoint.Property(EndpointProperty.Scheme)}://{PrimaryEndpoint.Property(EndpointProperty.Host)}:{PrimaryEndpoint.Property(EndpointProperty.Port)}"
-      );
-
+        ReferenceExpression.Create(
+            $"Endpoint={PrimaryEndpoint.Property(EndpointProperty.Scheme)}://{PrimaryEndpoint.Property(EndpointProperty.Host)}:{PrimaryEndpoint.Property(EndpointProperty.Port)}"
+        );
+    
     /// <summary>
     /// Gets the connection URI expression for the Ollama server.
     /// </summary>

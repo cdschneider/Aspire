@@ -28,7 +28,8 @@ public static partial class OllamaResourceBuilderExtensions
     /// <param name="containerName">The name of the container (Optional).</param>
     /// <returns>A reference to the <see cref="IResourceBuilder{T}"/>.</returns>
     /// <remarks>See https://openwebui.com for more information about Open WebUI</remarks>
-    public static IResourceBuilder<T> WithOpenWebUI<T>(this IResourceBuilder<T> builder, Action<IResourceBuilder<OpenWebUIResource>>? configureContainer = null, string? containerName = null) where T : OllamaResource
+    public static IResourceBuilder<T> WithOpenWebUI<T>(this IResourceBuilder<T> builder, Action<IResourceBuilder<OpenWebUIResource>>? configureContainer = null, string? containerName = null)
+        where T : class, IOllamaResource
     {
         ArgumentNullException.ThrowIfNull(builder, nameof(builder));
 
