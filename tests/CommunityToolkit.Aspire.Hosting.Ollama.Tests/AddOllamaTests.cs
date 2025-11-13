@@ -167,6 +167,26 @@ public class AddOllamaTests
     }
 
     [Fact]
+    public async Task OpenWebUIResourceEnvironmentVariables()
+    {
+        var builder = DistributedApplication.CreateBuilder();
+        _ = builder.AddOllama("ollama", port: null).WithOpenWebUI();
+        
+        using var app = builder.Build();
+        
+        var appModel = app.Services.GetRequiredService<DistributedApplicationModel>();
+        
+        var resource = Assert.Single(appModel.Resources.OfType<OpenWebUIResource>());
+        
+        var config = await resource.GetEnvironmentVariableValuesAsync(DistributedApplicationOperation.Run);
+        
+        Assert.Equal("false", config["ENABLE_SIGNUP"]);
+        Assert.Equal("false", config["ENABLE_COMMUNITY_SHARING"]);
+        Assert.Equal("false", config["WEBUI_AUTH"]);
+        Assert.Equal("http://ollama:11434", config["OLLAMA_BASE_URLS"]);
+    }
+
+    [Fact]
     public void OpenWebUIResourceExcludedFromManifestByDefault()
     {
         var builder = DistributedApplication.CreateBuilder();
@@ -189,11 +209,9 @@ public class AddOllamaTests
         _ = builder.AddOllama("ollama2", port: null).WithOpenWebUI();
 
         using var app = builder.Build();
-
         var appModel = app.Services.GetRequiredService<DistributedApplicationModel>();
 
         var resource = Assert.Single(appModel.Resources.OfType<OpenWebUIResource>());
-
         Assert.Equal(2, resource.OllamaResources.Count);
         Assert.Multiple(() =>
         {
