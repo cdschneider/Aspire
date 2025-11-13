@@ -8,10 +8,10 @@ namespace CommunityToolkit.Aspire.Hosting.Ollama.Tests;
 public class AppHostTests(AspireIntegrationTestFixture<Projects.CommunityToolkit_Aspire_Hosting_Ollama_AppHost> fixture) : IClassFixture<AspireIntegrationTestFixture<Projects.CommunityToolkit_Aspire_Hosting_Ollama_AppHost>>
 {
     [Fact]
-    public async Task ResourceStartsAndRespondsOk()
+    public async Task ResourcesStartAndRespondOk()
     {
         var distributedAppModel = fixture.App.Services.GetRequiredService<DistributedApplicationModel>();
-        var ollamaResources = distributedAppModel.Resources.OfType<OllamaResource>().ToList();
+        var ollamaResources = distributedAppModel.Resources.OfType<IOllamaResource>().ToList();
         
         var rns = fixture.ResourceNotificationService;
         
@@ -30,10 +30,10 @@ public class AppHostTests(AspireIntegrationTestFixture<Projects.CommunityToolkit
     }
 
     [Fact]
-    public async Task OllamaListsAvailableModels()
+    public async Task OllamaResourcesListAvailableModels()
     {
         var distributedAppModel = fixture.App.Services.GetRequiredService<DistributedApplicationModel>();
-        var ollamaResources = distributedAppModel.Resources.OfType<OllamaResource>().ToList();
+        var ollamaResources = distributedAppModel.Resources.OfType<IOllamaResource>().ToList();
         var modelResources = distributedAppModel.Resources.OfType<OllamaModelResource>().ToList();
         
         var rns = fixture.ResourceNotificationService;
