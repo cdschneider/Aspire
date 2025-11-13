@@ -202,7 +202,7 @@ public class AddOllamaTests
     }
 
     [Fact]
-    public void OpenWebUIConfiguredWithMultipleOllamaServers()
+    public async Task OpenWebUIConfiguredWithMultipleOllamaServers()
     {
         var builder = DistributedApplication.CreateBuilder();
         _ = builder.AddOllama("ollama", port: null).WithOpenWebUI();
@@ -212,11 +212,19 @@ public class AddOllamaTests
         var appModel = app.Services.GetRequiredService<DistributedApplicationModel>();
 
         var resource = Assert.Single(appModel.Resources.OfType<OpenWebUIResource>());
+        var config = await resource.GetEnvironmentVariableValuesAsync(DistributedApplicationOperation.Run);
+        var ollamaBaseUrls = config["OLLAMA_BASE_URLS"].Split(';');
+        
         Assert.Equal(2, resource.OllamaResources.Count);
+        Assert.Equal(resource.OllamaResources.Count, ollamaBaseUrls.Length);
+        
         Assert.Multiple(() =>
         {
             Assert.Equal("ollama", resource.OllamaResources[0].Name);
+            Assert.Contains("http://ollama:11434", ollamaBaseUrls);
+            
             Assert.Equal("ollama2", resource.OllamaResources[1].Name);
+            Assert.Contains("http://ollama2:11434", ollamaBaseUrls);
         });
     }
 
