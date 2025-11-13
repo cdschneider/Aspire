@@ -3,7 +3,7 @@ namespace Aspire.Hosting.ApplicationModel;
 /// <summary>
 /// 
 /// </summary>
-public interface IOllamaResource : IResourceWithConnectionString, IResourceWithWaitSupport
+public interface IOllamaResource : IResourceWithConnectionString, IResourceWithEndpoints
 {
     /// <summary>
     /// Adds a model to the list of models to download on initial startup.
@@ -24,6 +24,14 @@ public interface IOllamaResource : IResourceWithConnectionString, IResourceWithW
     /// Gets the port endpoint reference for this resource.
     /// </summary>
     EndpointReferenceExpression Port { get; }
+    
+    /// <summary>
+    /// Gets the connection URI expression for the Ollama resource.
+    /// </summary>
+    /// <remarks>
+    /// Format: <c>http://{host}:{port}</c>.
+    /// </remarks>
+    ReferenceExpression UriExpression { get; }
     
     /// <summary>
     /// Adds a model to the list of models to download on initial startup.

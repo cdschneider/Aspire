@@ -28,19 +28,14 @@ public class OllamaResource(string name) : ContainerResource(name), IOllamaResou
     public EndpointReferenceExpression Port => PrimaryEndpoint.Property(EndpointProperty.Port);
 
     /// <summary>
-    /// Gets the connection string expression for the Ollama server.
+    /// Gets the connection string expression for the Ollama resource.
     /// </summary>
     public ReferenceExpression ConnectionStringExpression =>
       ReferenceExpression.Create(
         $"Endpoint={PrimaryEndpoint.Property(EndpointProperty.Scheme)}://{PrimaryEndpoint.Property(EndpointProperty.Host)}:{PrimaryEndpoint.Property(EndpointProperty.Port)}"
       );
-
-    /// <summary>
-    /// Gets the connection URI expression for the Ollama server.
-    /// </summary>
-    /// <remarks>
-    /// Format: <c>http://{host}:{port}</c>.
-    /// </remarks>
+    
+    /// <inheritdoc/>
     public ReferenceExpression UriExpression => ReferenceExpression.Create($"{PrimaryEndpoint.Property(EndpointProperty.Scheme)}://{Host}:{Port}");
 
     /// <inheritdoc/>

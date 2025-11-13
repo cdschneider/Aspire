@@ -1,7 +1,9 @@
 using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.Utils;
 using CommunityToolkit.Aspire.Hosting.Ollama;
+using Microsoft.Extensions.AI;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace Aspire.Hosting;
 
@@ -37,6 +39,7 @@ public static partial class OllamaResourceBuilderExtensions
         {
             var builderForExistingResource = builder.ApplicationBuilder.CreateResourceBuilder(existingOpenWebUIResource);
             existingOpenWebUIResource.AddOllamaResource(builder.Resource);
+            
             configureContainer?.Invoke(builderForExistingResource);
             return builder;
         }
@@ -96,6 +99,18 @@ public static partial class OllamaResourceBuilderExtensions
         context.EnvironmentVariables.Add("ENABLE_SIGNUP", "false");
         context.EnvironmentVariables.Add("ENABLE_COMMUNITY_SHARING", "false"); // by default don't enable sharing
         context.EnvironmentVariables.Add("WEBUI_AUTH", "false"); // https://docs.openwebui.com/#quick-start-with-docker--recommended
-        context.EnvironmentVariables.Add("OLLAMA_BASE_URLS", string.Join(";", resource.OllamaResources.Select(resource => $"http://{resource.Name}:{resource.PrimaryEndpoint.TargetPort}")));
+        
+        ReferenceExpressionBuilder builder = new();
+        
+        for (int i = 0; i < resource.OllamaResources.Count; i++)
+        {
+            var ollama = resource.OllamaResources[i];
+            builder.Append($"{ollama.PrimaryEndpoint}");
+
+            if (i != resource.OllamaResources.Count - 1)
+                builder.AppendLiteral(";");
+        }
+            
+        context.EnvironmentVariables["OLLAMA_BASE_URLS"] = builder.Build();
     }
 }
