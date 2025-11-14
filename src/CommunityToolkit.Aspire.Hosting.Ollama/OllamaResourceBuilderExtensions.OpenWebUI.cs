@@ -110,7 +110,10 @@ public static partial class OllamaResourceBuilderExtensions
             if (i != resource.OllamaResources.Count - 1)
                 builder.AppendLiteral(";");
         }
-            
-        context.EnvironmentVariables["OLLAMA_BASE_URLS"] = builder.Build();
+
+        if (!builder.IsEmpty)
+        {
+            context.EnvironmentVariables["OLLAMA_BASE_URLS"] = builder.Build();
+        }
     }
 }

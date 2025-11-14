@@ -47,7 +47,15 @@ public static partial class OllamaResourceBuilderExtensions
         return builder.AddResource(resource)
             .WithArgs("serve")
             .WithHttpEndpoint(port: port, targetPort: 11434, name: OllamaExecutableResource.OllamaEndpointName)
-            .WithHttpHealthCheck("/");
+            .WithHttpHealthCheck("/")
+            .WithEnvironment(context =>
+            {
+                if (context.EnvironmentVariables.ContainsKey("OLLAMA_HOST"))
+                    return;
+                
+                var ollamaEndpoint = resource.GetEndpoint(OllamaExecutableResource.OllamaEndpointName);
+                context.EnvironmentVariables["OLLAMA_HOST"] = ReferenceExpression.Create($"{ollamaEndpoint.Property(EndpointProperty.Scheme)}://{ollamaEndpoint.EndpointAnnotation.TargetHost}:{ollamaEndpoint.Property(EndpointProperty.TargetPort)}");
+            });
     }
 
     /// <summary>
