@@ -199,6 +199,39 @@ public class AddOllamaLocalTests
         Assert.Contains("/", annotation.Key);
         Assert.Contains(resource.Name, annotation.Key);
     }
+    
+    [Fact]
+    public void OllamaLocalRegistrationContainsResourceCommandAnnotations()
+    {
+        var builder = DistributedApplication.CreateBuilder();
+        _ = builder.AddOllamaLocal("ollama");
+
+        using var app = builder.Build();
+
+        var appModel = app.Services.GetRequiredService<DistributedApplicationModel>();
+
+        var resource = Assert.Single(appModel.Resources.OfType<OllamaExecutableResource>());
+
+        Assert.True(resource.TryGetAnnotationsOfType<ResourceCommandAnnotation>(out var annotations));
+
+        Assert.Equal(2, annotations.Count());
+
+        Assert.Collection(annotations,
+            annotation =>
+            {
+                Assert.Equal("ListAllModels", annotation.Name);
+                Assert.Equal("List All Models", annotation.DisplayName);
+                Assert.Equal("List all models in the Ollama container.", annotation.DisplayDescription);
+                Assert.Equal("AppsList", annotation.IconName);
+            },
+            annotation =>
+            {
+                Assert.Equal("ListRunningModels", annotation.Name);
+                Assert.Equal("List Running Models", annotation.DisplayName);
+                Assert.Equal("List all running models in the Ollama container.", annotation.DisplayDescription);
+                Assert.Equal("AppsList", annotation.IconName);
+            });
+    }
 
     [Fact]
     public void OllamaLocalModelResourceRegistersCustomHealthCheck()
@@ -320,6 +353,51 @@ public class AddOllamaLocalTests
         Assert.Equal(ResourceCommandState.Enabled, state);
     }
 
+    [Theory]
+    [InlineData("ListAllModels")]
+    [InlineData("ListRunningModels")]
+    public void OllamaResourceCommandsUpdateState(string commandType)
+    {
+        var builder = DistributedApplication.CreateBuilder();
+        _ = builder.AddOllamaLocal("ollama");
+
+        using var app = builder.Build();
+
+        var appModel = app.Services.GetRequiredService<DistributedApplicationModel>();
+
+        var resource = Assert.Single(appModel.Resources.OfType<OllamaExecutableResource>());
+
+        var command = Assert.Single(resource.Annotations.OfType<ResourceCommandAnnotation>(), a => a.Name == commandType);
+
+        var context = new UpdateCommandStateContext
+        {
+            ResourceSnapshot = new CustomResourceSnapshot()
+            {
+                State = null,
+                ResourceType = resource.GetType().Name,
+                Properties = [],
+            },
+            ServiceProvider = app.Services
+        };
+
+        var state = command.UpdateState(context);
+        Assert.Equal(ResourceCommandState.Disabled, state);
+
+        context = new UpdateCommandStateContext
+        {
+            ResourceSnapshot = new CustomResourceSnapshot()
+            {
+                State = new ResourceStateSnapshot(KnownResourceStates.Running, KnownResourceStateStyles.Success),
+                ResourceType = resource.GetType().Name,
+                Properties = [],
+            },
+            ServiceProvider = app.Services
+        };
+
+        state = command.UpdateState(context);
+        Assert.Equal(ResourceCommandState.Enabled, state);
+    }
+    
     [Fact]
     public void OpenWebUIConfigured()
     {
