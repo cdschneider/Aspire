@@ -1,10 +1,13 @@
 ﻿namespace Aspire.Hosting.ApplicationModel;
 
 /// <summary>
-/// 
+/// A resource that represents a executable Ollama resource.
 /// </summary>
-/// <param name="name"></param>
-/// <param name="command"></param>
+/// <remarks>
+/// Constructs an <see cref="OllamaExecutableResource"/>.
+/// </remarks>
+/// <param name="name">The name of the resource.</param>
+/// <param name="command">The command to execute.</param>
 public class OllamaExecutableResource(string name, string command) : ExecutableResource(name, command, string.Empty), IOllamaResource
 {
     internal const string OllamaEndpointName = "http";

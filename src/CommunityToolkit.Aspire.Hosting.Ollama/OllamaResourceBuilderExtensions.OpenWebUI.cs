@@ -1,9 +1,7 @@
 using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.Utils;
 using CommunityToolkit.Aspire.Hosting.Ollama;
-using Microsoft.Extensions.AI;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
 
 namespace Aspire.Hosting;
 
@@ -39,7 +37,6 @@ public static partial class OllamaResourceBuilderExtensions
         {
             var builderForExistingResource = builder.ApplicationBuilder.CreateResourceBuilder(existingOpenWebUIResource);
             existingOpenWebUIResource.AddOllamaResource(builder.Resource);
-            
             configureContainer?.Invoke(builderForExistingResource);
             return builder;
         }

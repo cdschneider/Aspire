@@ -28,7 +28,7 @@ public class OllamaResource(string name) : ContainerResource(name), IOllamaResou
     public EndpointReferenceExpression Port => PrimaryEndpoint.Property(EndpointProperty.Port);
 
     /// <summary>
-    /// Gets the connection string expression for the Ollama resource.
+    /// Gets the connection string expression for the Ollama container.
     /// </summary>
     public ReferenceExpression ConnectionStringExpression =>
       ReferenceExpression.Create(
@@ -47,7 +47,7 @@ public class OllamaResource(string name) : ContainerResource(name), IOllamaResou
             _models.Add(modelName);
         }
     }
-    
+
     IEnumerable<KeyValuePair<string, ReferenceExpression>> IResourceWithConnectionString.GetConnectionProperties()
     {
         yield return new("Host", ReferenceExpression.Create($"{Host}"));

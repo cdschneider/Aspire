@@ -1,7 +1,7 @@
 namespace Aspire.Hosting.ApplicationModel;
 
 /// <summary>
-/// 
+/// Represents an Ollama resource.
 /// </summary>
 public interface IOllamaResource : IResourceWithConnectionString, IResourceWithEndpoints
 {

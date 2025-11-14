@@ -1,4 +1,5 @@
 ﻿using Aspire.Hosting.ApplicationModel;
+using Aspire.Hosting.Utils;
 using CommunityToolkit.Aspire.Hosting.Ollama;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -13,7 +14,7 @@ namespace Aspire.Hosting;
 public static partial class OllamaResourceBuilderExtensions
 {
     /// <summary>
-    /// Adds the Ollama to the application model.
+    /// Adds the Ollama container to the application model.
     /// </summary>
     /// <param name="builder">The <see cref="IDistributedApplicationBuilder"/>.</param>
     /// <param name="name">The name of the resource. This name will be used as the connection string name when referenced in a dependency.</param>
@@ -32,11 +33,11 @@ public static partial class OllamaResourceBuilderExtensions
     }
     
     /// <summary>
-    /// Adds Ollama local executable resource to the application model.
+    /// Adds the Ollama executable resource to the application model.
     /// </summary>
     /// <param name="builder">The <see cref="IDistributedApplicationBuilder"/>.</param>
     /// <param name="name">The name of the resource. This name will be used as the connection string name when referenced in a dependency.</param>
-    /// <param name="port">An optional fixed port to bind to the Ollama server process. This will be provided randomly by Aspire if not set.</param>
+    /// <param name="port">An optional fixed port to bind to the Ollama process. This will be provided randomly by Aspire if not set.</param>
     /// <returns></returns>
     public static IResourceBuilder<OllamaExecutableResource> AddOllamaLocal(this IDistributedApplicationBuilder builder, [ResourceName] string name, int? port = null)
     {
@@ -45,7 +46,7 @@ public static partial class OllamaResourceBuilderExtensions
 
         var resource = new OllamaExecutableResource(name, "ollama");
         return builder.AddResource(resource)
-            .WithArgs("serve")
+            .WithArgs(["serve"])
             .WithHttpEndpoint(port: port, targetPort: OllamaExecutableResource.DefaultHttpPort, name: OllamaExecutableResource.OllamaEndpointName)
             .WithHttpHealthCheck("/")
             .WithEnvironment(context =>
