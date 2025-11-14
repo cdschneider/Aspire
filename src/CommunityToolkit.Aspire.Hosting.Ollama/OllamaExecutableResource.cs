@@ -8,6 +8,7 @@
 public class OllamaExecutableResource(string name, string command) : ExecutableResource(name, command, string.Empty), IOllamaResource
 {
     internal const string OllamaEndpointName = "http";
+    internal const int DefaultHttpPort = 11434;
     
     private readonly List<string> _models = [];
 

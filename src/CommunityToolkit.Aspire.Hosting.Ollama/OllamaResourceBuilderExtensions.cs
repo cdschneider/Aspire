@@ -46,7 +46,7 @@ public static partial class OllamaResourceBuilderExtensions
         var resource = new OllamaExecutableResource(name, "ollama");
         return builder.AddResource(resource)
             .WithArgs("serve")
-            .WithHttpEndpoint(port: port, targetPort: 11434, name: OllamaExecutableResource.OllamaEndpointName)
+            .WithHttpEndpoint(port: port, targetPort: OllamaExecutableResource.DefaultHttpPort, name: OllamaExecutableResource.OllamaEndpointName)
             .WithHttpHealthCheck("/")
             .WithEnvironment(context =>
             {
