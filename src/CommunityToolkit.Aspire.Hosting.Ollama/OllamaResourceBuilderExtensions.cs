@@ -44,7 +44,7 @@ public static partial class OllamaResourceBuilderExtensions
         ArgumentNullException.ThrowIfNull(builder, nameof(builder));
         ArgumentNullException.ThrowIfNull(name, nameof(name));
 
-        var resource = new OllamaExecutableResource(name, "ollama");
+        var resource = new OllamaExecutableResource(name, "ollama").AddOllamaDefaultCommands();
         return builder.AddResource(resource)
             .WithArgs(["serve"])
             .WithHttpEndpoint(port: port, targetPort: OllamaExecutableResource.DefaultHttpPort, name: OllamaExecutableResource.OllamaEndpointName)
